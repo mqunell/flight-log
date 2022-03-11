@@ -13,7 +13,7 @@ export default function Home({ trips }) {
 
 		for (let i = 1; i < trip.blocks.length; i++) {
 			if (trip.blocks[i].date === prevDate) {
-				trip.blocks[i].date = null;
+				trip.blocks[i].date = '';
 			} else {
 				prevDate = trip.blocks[i].date;
 			}
@@ -78,7 +78,7 @@ export default function Home({ trips }) {
 function BlockCols({ block }: { block: Block }) {
 	return (
 		<>
-			<td>{block.date && block.date.toString().slice(0, 10)}</td>
+			<td>{block.date.slice(0, 10)}</td>
 			<td>{block.startAirport}</td>
 			<td>{block.endAirport}</td>
 			<td>{block.duration}</td>

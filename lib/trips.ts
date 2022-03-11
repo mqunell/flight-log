@@ -10,13 +10,13 @@ export interface Trip {
 }
 
 export interface Block {
-	date: Date;
+	date: string;
 	startAirport: string;
 	endAirport: string;
 	duration: number; // minutes
 	mileage: number;
 	layover: boolean;
-	aircraftLetter: 'A' | 'B';
+	aircraftLetter: 'A' | 'B' | 'O';
 	aircraftNumber: number;
 	aircraftBody: 'N' | 'W';
 	flightNumber: number;
@@ -28,9 +28,7 @@ export interface City {
 	state: string;
 }
 
-// Read the Trips from JSON
-const trips: Trip[] = JSON.parse(fs.readFileSync('./log.json').toString());
-
 export async function getTrips(): Promise<Trip[]> {
+	const trips: Trip[] = JSON.parse(fs.readFileSync('./log.json').toString());
 	return trips;
 }

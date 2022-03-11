@@ -60,7 +60,7 @@ function formatJson(records: string[][]): Trip[] {
 	// Declare/initialize CSV variables
 	const allTrips: Trip[] = [];
 	let currentTrip: Trip | null = null; // Initial assignment required for accessing the variable outside the loop
-	let prevDate: Date;
+	let prevDate: string;
 
 	// Loop through the lines of the CSV file
 	records.forEach((row: string[]) => {
@@ -80,10 +80,10 @@ function formatJson(records: string[][]): Trip[] {
 			};
 
 			// Initialize block data
-			prevDate = new Date(row[DATE]);
+			prevDate = row[DATE];
 		}
 
-		if (row[DATE].length) prevDate = new Date(row[DATE]);
+		if (row[DATE].length) prevDate = row[DATE];
 
 		// Parse the Block and add it to currentTrip.blocks
 		const rowBlock: Block = {
@@ -93,7 +93,7 @@ function formatJson(records: string[][]): Trip[] {
 			duration: convertToMinutes(row[BLOCK_TIME]),
 			mileage: parseInt(row[MILEAGE]),
 			layover: row[LAYOVER].length > 0,
-			aircraftLetter: row[AIRCRAFT_LETTER] as 'A' | 'B',
+			aircraftLetter: row[AIRCRAFT_LETTER] as 'A' | 'B' | 'O',
 			aircraftNumber: parseInt(row[AIRCRAFT_NUMBER]),
 			aircraftBody: row[BODY_TYPE] as 'N' | 'W',
 			flightNumber: parseInt(row[FLIGHT_NUMBER]),
