@@ -15,10 +15,7 @@ body {
 }
 
 body {
-	width: 100vw;
-	min-height: 100vh;
-	color: #eee;
-	background-color: #333;
+	@apply bg-slate-600;
 }
 
 th,
