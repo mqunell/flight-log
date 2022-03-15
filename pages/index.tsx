@@ -14,6 +14,9 @@ export default function Home() {
 			<Link href="/rotations">
 				<a className="text-blue-300 hover:underline">Rotations</a>
 			</Link>
+			<Link href="/add">
+				<a className="text-blue-300 hover:underline">Add</a>
+			</Link>
 		</div>
 	);
 }
