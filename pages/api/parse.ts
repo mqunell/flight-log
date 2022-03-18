@@ -1,7 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import fs from 'fs';
 import { parse } from 'csv-parse/sync';
-import { Trip, Block } from '../../lib/trips';
+import { Trip, Block, saveTrip } from '../../lib/trips';
+
+/**
+ * This API route parses a CSV export of the log spreadsheet from Google Drive, formats the data as
+ * JSON, and adds the full trip to the database. Once this project gets to a point where the log
+ * spreadsheet is no longer being used, this route will become unnecessary.
+ */
 
 // CSV indexes
 const [
@@ -24,17 +29,16 @@ const [
 	TIME_AWAY_FROM_BASE,
 ] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 
-/**
- * Parse raw CSV text and export as a JSON file
- */
+// Parse raw CSV text and add objects to database
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 	const rawText = req.body;
 
 	const records = parseCsv(rawText);
 	const json = formatJson(records);
 
+	json.forEach((trip: Trip) => saveTrip(trip));
+
 	res.status(200).json(json);
-	fs.writeFileSync('log.json', JSON.stringify(json));
 }
 
 // Convert "hh:mm" to minutes
@@ -94,7 +98,7 @@ function formatJson(records: string[][]): Trip[] {
 			mileage: parseInt(row[MILEAGE]),
 			layover: row[LAYOVER].length > 0,
 			aircraftLetter: row[AIRCRAFT_LETTER] as 'A' | 'B' | 'O',
-			aircraftNumber: parseInt(row[AIRCRAFT_NUMBER]),
+			aircraftNumber: row[AIRCRAFT_NUMBER],
 			aircraftBody: row[BODY_TYPE] as 'N' | 'W',
 			flightNumber: parseInt(row[FLIGHT_NUMBER]),
 		};

@@ -2,6 +2,7 @@ import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import classNames from 'classnames';
 import { Trip, Block, getTrips } from '../lib/trips';
+import { Fragment } from 'react';
 
 export const getServerSideProps: GetServerSideProps = async () => {
 	const trips = await getTrips();
@@ -53,9 +54,8 @@ export default function Rotations({ trips }) {
 				</thead>
 				<tbody>
 					{trips.map((trip: Trip, index: number) => (
-						<>
+						<Fragment key={trip.tripNumber}>
 							<tr
-								key={trip.tripNumber}
 								className={classNames(
 									'border-t-2 border-black',
 									index % 2 === 0 ? 'bg-gray-50' : 'bg-gray-200'
@@ -79,7 +79,7 @@ export default function Rotations({ trips }) {
 									<BlockCols block={block} />
 								</tr>
 							))}
-						</>
+						</Fragment>
 					))}
 				</tbody>
 			</table>
