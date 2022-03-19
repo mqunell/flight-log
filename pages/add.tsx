@@ -1,6 +1,6 @@
-import axios from 'axios';
-import { Fragment, useEffect, useState } from 'react';
-import { useForm, useFieldArray, Controller } from 'react-hook-form';
+import { Fragment, useState } from 'react';
+import { useForm, useFieldArray } from 'react-hook-form';
+import AddConfirm from '../components/AddConfirm';
 
 /**
  * Add form needs to get:
@@ -8,12 +8,6 @@ import { useForm, useFieldArray, Controller } from 'react-hook-form';
  *   blocks: everything
  */
 export default function Add() {
-	const [tripNumber, setTripNumber] = useState();
-
-	useEffect(() => {
-		axios.get('/api/tripNumber').then((res) => setTripNumber(res.data.tripNumber));
-	}, []);
-
 	const {
 		control,
 		register,
@@ -24,191 +18,235 @@ export default function Add() {
 
 	const { fields, append, remove } = useFieldArray({ control, name: 'blocks' });
 
-	const onSubmit = (data: any) => {
-		console.log(data);
-		console.log(JSON.stringify(data.blocks));
-	};
+	const [showModal, setShowModal] = useState(false);
+
+	// Validate data before showing AddConfirm modal
+	const onSubmit = (data: any) => setShowModal(true);
 
 	return (
-		<form
-			className="my-4 mx-auto flex w-80 flex-col gap-3 text-white"
-			onSubmit={handleSubmit(onSubmit)}
-		>
-			<h1 className="bold text-center text-2xl">Add a Rotation</h1>
-			<h2 className="text-xl underline underline-offset-2">Rotation Info</h2>
-			<p className="flex justify-between">
-				<span>Trip number: {tripNumber}</span>
-				<span>Trip length: {getValues().blocks?.length}</span>
-			</p>
+		<>
+			<form
+				className="my-4 mx-auto flex w-80 flex-col gap-3 text-white"
+				onSubmit={handleSubmit(onSubmit)}
+			>
+				<h1 className="text-center text-xl underline underline-offset-2">
+					Add a Rotation
+				</h1>
 
-			<label>
-				Rotation #
-				<input
-					type="text"
-					placeholder="1234"
-					{...register('rotation', { required: true })}
-				/>
-			</label>
+				<label>
+					Rotation #
+					<input
+						type="text"
+						className="focus:ring-offset-slate-500"
+						placeholder="1234"
+						{...register('rotation', { required: true })}
+					/>
+				</label>
 
-			<label>
-				Credit value
-				<input
-					type="text"
-					placeholder="01:23"
-					{...register('creditValue', {
-						pattern: /\d{1,3}:\d{2}/g,
-						required: true,
-					})}
-				/>
-			</label>
+				<label>
+					Credit value
+					<input
+						type="text"
+						className="focus:ring-offset-slate-500"
+						placeholder="1:23"
+						{...register('creditValue', {
+							pattern: /\d{1,3}:\d{2}/g,
+							required: true,
+						})}
+					/>
+				</label>
 
-			<label>
-				Time away
-				<input
-					type="text"
-					placeholder="34:56"
-					{...register('timeAwayFromBase', {
-						pattern: /\d{1,3}:\d{2}/g,
-						required: true,
-					})}
-				/>
-			</label>
+				<label>
+					Time away
+					<input
+						type="text"
+						className="focus:ring-offset-slate-500"
+						placeholder="34:56"
+						{...register('timeAwayFromBase', {
+							pattern: /\d{1,3}:\d{2}/g,
+							required: true,
+						})}
+					/>
+				</label>
 
-			<hr className="my-3" />
+				<hr className="my-3" />
 
-			{fields.map((item, index) => (
-				<Fragment key={`block-${index}`}>
-					<h2 className="text-xl underline underline-offset-2">Block #{index + 1}</h2>
+				{fields.map((field, index) => (
+					<Fragment key={field.id}>
+						<h2 className="text-center text-xl underline underline-offset-2">
+							Block #{index + 1}
+						</h2>
 
-					<label>
-						Date
-						<input
-							type="date"
-							defaultValue={index !== 0 ? getValues().blocks[index - 1].date : ''}
-							{...register(`blocks.${index}.date`, {
-								required: true,
-							})}
-						/>
-					</label>
+						<label>
+							Date
+							<input
+								type="date"
+								className="focus:ring-offset-slate-500"
+								defaultValue={
+									index === 0
+										? new Date().toISOString().slice(0, 10)
+										: getValues().blocks[index - 1].date
+								}
+								{...register(`blocks.${index}.date`, {
+									required: true,
+								})}
+							/>
+						</label>
 
-					<label>
-						Departure
-						<input
-							type="text"
-							defaultValue={index !== 0 ? getValues().blocks[index - 1].endAirport : ''}
-							{...register(`blocks.${index}.startAirport` as const, {
-								minLength: 3,
-								maxLength: 3,
-								pattern: /[a-zA-Z]{3}/,
-								required: true,
-							})}
-						/>
-					</label>
-
-					<label>
-						Arrival
-						<input
-							type="text"
-							{...register(`blocks.${index}.endAirport` as const, {
-								minLength: 3,
-								maxLength: 3,
-								pattern: /[a-zA-Z]{3}/,
-								required: true,
-							})}
-						/>
-					</label>
-
-					<label>
-						Block time
-						<input
-							type="text"
-							{...register(`blocks.${index}.duration`, {
-								pattern: /\d{1,3}:\d{2}/g,
-								required: true,
-							})}
-						/>
-					</label>
-
-					<label>
-						Mileage
-						<input
-							type="number"
-							{...register(`blocks.${index}.mileage`, {
-								required: true,
-							})}
-						/>
-					</label>
-
-					<label>
-						Layover
-						<div className="flex items-center gap-1">
-							<input type="checkbox" {...register(`blocks.${index}.layover`)} />
-							Yes
-						</div>
-					</label>
-
-					<label>
-						Aircraft Letter
-						<div className="flex items-center gap-1">
+						<label>
+							Departure
 							<input
 								type="text"
+								className="focus:ring-offset-slate-500"
+								placeholder="MSP"
+								defaultValue={
+									index === 0 ? 'MSP' : getValues().blocks[index - 1].endAirport
+								}
+								{...register(`blocks.${index}.startAirport` as const, {
+									minLength: 3,
+									maxLength: 3,
+									pattern: /[a-zA-Z]{3}/,
+									required: true,
+								})}
+							/>
+						</label>
+
+						<label>
+							Arrival
+							<input
+								type="text"
+								className="focus:ring-offset-slate-500"
+								placeholder="SEA"
+								{...register(`blocks.${index}.endAirport` as const, {
+									minLength: 3,
+									maxLength: 3,
+									pattern: /[a-zA-Z]{3}/,
+									required: true,
+								})}
+							/>
+						</label>
+
+						<label>
+							Block time
+							<input
+								type="text"
+								className="focus:ring-offset-slate-500"
+								placeholder="1:23"
+								{...register(`blocks.${index}.duration`, {
+									pattern: /\d{1,3}:\d{2}/g,
+									required: true,
+								})}
+							/>
+						</label>
+
+						<label>
+							Mileage
+							<input
+								type="number"
+								className="focus:ring-offset-slate-500"
+								placeholder="800"
+								{...register(`blocks.${index}.mileage`, {
+									required: true,
+								})}
+							/>
+						</label>
+
+						<label>
+							Layover
+							<div className="flex items-center gap-1">
+								<input
+									type="checkbox"
+									className="focus:ring-offset-slate-500"
+									{...register(`blocks.${index}.layover`)}
+								/>
+								Yes
+							</div>
+						</label>
+
+						<label>
+							Aircraft Letter
+							<input
+								type="text"
+								className="focus:ring-offset-slate-500"
+								placeholder="A"
 								{...register(`blocks.${index}.aircraftLetter`, {
 									pattern: /[A-Z]{1}/,
 									required: true,
 								})}
 							/>
-						</div>
-					</label>
+						</label>
 
-					<label>
-						Aircraft Number
-						<div className="flex items-center gap-1">
+						<label>
+							Aircraft #
 							<input
 								type="number"
+								className="focus:ring-offset-slate-500"
+								placeholder="737"
 								{...register(`blocks.${index}.aircraftNumber`, {
 									required: true,
 								})}
 							/>
-						</div>
-					</label>
+						</label>
 
-					<label>
-						Aircraft Body
-						<div className="flex items-center gap-1">
+						<label>
+							Aircraft Body
 							<input
 								type="text"
+								className="focus:ring-offset-slate-500"
+								placeholder="N"
+								defaultValue="N"
 								{...register(`blocks.${index}.aircraftBody`, {
 									pattern: /[A-Z]{1}/,
 									required: true,
 								})}
 							/>
-						</div>
-					</label>
+						</label>
 
-					<label>
-						Flight Number
-						<div className="flex items-center gap-1">
+						<label>
+							Flight #
 							<input
 								type="number"
+								className="focus:ring-offset-slate-500"
+								placeholder="7890"
 								{...register(`blocks.${index}.flightNumber`, {
 									required: true,
 								})}
 							/>
-						</div>
-					</label>
-				</Fragment>
-			))}
+						</label>
+					</Fragment>
+				))}
 
-			{fields.length > 0 && <hr className="my-3" />}
+				{fields.length > 0 && <hr className="my-3" />}
 
-			<input
-				type="button"
-				className="form-input"
-				onClick={() => append({})}
-				value="Add Block"
+				<input
+					type="button"
+					className="form-input focus:ring-offset-slate-500"
+					onClick={() => append({})}
+					value="Add Block"
+				/>
+
+				{fields.length > 0 && (
+					<>
+						<input
+							type="button"
+							className="form-input focus:ring-offset-slate-500"
+							onClick={() => remove(fields.length - 1)}
+							value="Remove Block"
+						/>
+						<input
+							type="submit"
+							className="form-input focus:ring-offset-slate-500"
+							value="Submit"
+						/>
+					</>
+				)}
+			</form>
+
+			<AddConfirm
+				isOpen={showModal}
+				close={() => setShowModal(false)}
+				pendingTrip={getValues()}
 			/>
-
-			{fields.length > 0 && <input type="submit" className="form-input" value="Submit" />}
-		</form>
+		</>
 	);
 }

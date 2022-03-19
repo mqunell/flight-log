@@ -27,6 +27,20 @@ label {
 	@apply grid grid-cols-[100px_1fr] items-center gap-2;
 }
 
+input[type='text'],
+input[type='date'],
+input[type='number'],
+input[type='checkbox'],
+input[type='button'],
+input[type='submit'] {
+	@apply rounded border-0 px-2 py-1 text-black transition-[box-shadow] duration-200 focus:ring-2 focus:ring-blue-400 focus:ring-offset-2;
+}
+
+input[type='button'],
+input[type='submit'] {
+	@apply cursor-pointer;
+}
+
 [type='checkbox']:checked,
 [type='radio']:checked,
 [type='checkbox']:checked:hover,
@@ -34,13 +48,4 @@ label {
 [type='radio']:checked:hover,
 [type='radio']:checked:focus {
 	@apply bg-blue-500;
-}
-
-input[type='text'],
-input[type='date'],
-input[type='number'],
-input[type='checkbox'],
-input[type='button'],
-input[type='submit'] {
-	@apply rounded px-2 py-1 text-black transition-[box-shadow] duration-200 focus:ring-2 focus:ring-blue-400 focus:ring-offset-1 focus:ring-offset-slate-600;
 }
