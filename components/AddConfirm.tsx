@@ -29,12 +29,12 @@ export default function AddConfirm({ isOpen, close, pendingTrip }) {
 	const onConfirm = () => {
 		const newTrip = {
 			tripNumber,
-			rotation: pendingTrip.rotation.toUpperCase(),
+			rotation: pendingTrip.rotation,
 			tripLength: getTripLength(),
 			blocks: pendingTrip.blocks.map((pendingBlock) => ({
 				date: pendingBlock.date,
-				startAirport: pendingBlock.startAirport.toUpperCase(),
-				endAirport: pendingBlock.endAirport.toUpperCase(),
+				startAirport: pendingBlock.startAirport,
+				endAirport: pendingBlock.endAirport,
 				duration: convertToMinutes(pendingBlock.duration),
 				mileage: parseInt(pendingBlock.mileage),
 				layover: pendingBlock.layover,

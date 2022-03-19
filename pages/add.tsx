@@ -12,6 +12,7 @@ export default function Add() {
 		control,
 		register,
 		getValues,
+		setValue,
 		handleSubmit,
 		formState: { errors },
 	} = useForm();
@@ -19,6 +20,11 @@ export default function Add() {
 	const { fields, append, remove } = useFieldArray({ control, name: 'blocks' });
 
 	const [showModal, setShowModal] = useState(false);
+
+	// Capitalize a field as it is typed in
+	const capitalizeField = ({ target }) => {
+		setValue(target.name, target.value.toUpperCase());
+	};
 
 	// Validate data before showing AddConfirm modal
 	const onSubmit = (data: any) => setShowModal(true);
@@ -40,6 +46,7 @@ export default function Add() {
 						className="focus:ring-offset-slate-500"
 						placeholder="1234"
 						{...register('rotation', { required: true })}
+						onChange={capitalizeField}
 					/>
 				</label>
 
@@ -108,6 +115,7 @@ export default function Add() {
 									pattern: /[a-zA-Z]{3}/,
 									required: true,
 								})}
+								onChange={capitalizeField}
 							/>
 						</label>
 
@@ -123,6 +131,7 @@ export default function Add() {
 									pattern: /[a-zA-Z]{3}/,
 									required: true,
 								})}
+								onChange={capitalizeField}
 							/>
 						</label>
 
@@ -173,18 +182,20 @@ export default function Add() {
 									pattern: /[A-Z]{1}/,
 									required: true,
 								})}
+								onChange={capitalizeField}
 							/>
 						</label>
 
 						<label>
 							Aircraft #
 							<input
-								type="number"
+								type="text"
 								className="focus:ring-offset-slate-500"
 								placeholder="737"
 								{...register(`blocks.${index}.aircraftNumber`, {
 									required: true,
 								})}
+								onChange={capitalizeField}
 							/>
 						</label>
 
@@ -199,6 +210,7 @@ export default function Add() {
 									pattern: /[A-Z]{1}/,
 									required: true,
 								})}
+								onChange={capitalizeField}
 							/>
 						</label>
 
