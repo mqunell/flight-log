@@ -14,6 +14,7 @@ export default function Add() {
 		getValues,
 		setValue,
 		handleSubmit,
+		reset,
 		formState: { errors },
 	} = useForm();
 
@@ -257,6 +258,7 @@ export default function Add() {
 			<AddConfirm
 				isOpen={showModal}
 				close={() => setShowModal(false)}
+				resetForm={reset}
 				pendingTrip={getValues()}
 			/>
 		</>

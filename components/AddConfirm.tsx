@@ -3,7 +3,7 @@ import { Dialog } from '@headlessui/react';
 import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion';
 
-export default function AddConfirm({ isOpen, close, pendingTrip }) {
+export default function AddConfirm({ isOpen, close, resetForm, pendingTrip }) {
 	const [tripNumber, setTripNumber] = useState();
 
 	useEffect(() => {
@@ -47,7 +47,15 @@ export default function AddConfirm({ isOpen, close, pendingTrip }) {
 			timeAwayFromBase: convertToMinutes(pendingTrip.timeAwayFromBase),
 		};
 
-		console.log(newTrip);
+		axios
+			.post('/api/saveTrip', { newTrip })
+			.then(() => {
+				// The modal must be closed/unrendered before resetting the form
+				close();
+				resetForm();
+				setTimeout(() => alert('Success'), 350);
+			})
+			.catch((error) => alert(error));
 	};
 
 	return (
