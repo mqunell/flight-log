@@ -2,20 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
-	box-sizing: border-box;
-}
-
-html,
-body {
-	padding: 0;
-	margin: 0;
-	font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu,
-		Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-}
-
 body {
 	@apply bg-slate-600;
+}
+
+#rotations-table::-webkit-scrollbar {
+	@apply h-2 w-2;
+}
+
+#rotations-table::-webkit-scrollbar-thumb {
+	@apply rounded bg-slate-400;
+}
+
+#rotations-table::-webkit-scrollbar-corner {
+	background-color: transparent;
 }
 
 th,
