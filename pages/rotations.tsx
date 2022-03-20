@@ -23,6 +23,21 @@ export const getServerSideProps: GetServerSideProps = async () => {
 	return { props: { trips } };
 };
 
+// Convert "yyyy-mm-dd" to "mm/dd/yyyy"
+const formatDate = (date: string): string => {
+	const [y, m, d] = date.split('-');
+
+	return `${m.toString().padStart(2, '0')}/${d.toString().padStart(2, '0')}/${y}`;
+};
+
+// Convert minutes to "h:mm"
+const formatTime = (minutes: number): string => {
+	const h = Math.floor(minutes / 60);
+	const m = minutes % 60;
+
+	return `${h}:${m.toString().padStart(2, '0')}`;
+};
+
 export default function Rotations({ trips }) {
 	return (
 		<div className="flex h-screen flex-col items-center gap-2 p-4">
@@ -36,9 +51,10 @@ export default function Rotations({ trips }) {
 
 			<div
 				id="rotations-table"
-				className="h-full w-max max-w-full overflow-scroll rounded-md border-2 border-black"
+				style={{ overflow: 'overlay' }}
+				className="h-full w-max max-w-full border-2 border-black bg-black"
 			>
-				<table className="relative -inset-[1px] table border-0 text-center">
+				<table className="table border-2 border-black text-center">
 					<thead>
 						<tr className="bg-gray-200">
 							<th>Trip Number</th>
@@ -73,8 +89,10 @@ export default function Rotations({ trips }) {
 
 									<BlockCols block={trip.blocks[0]} />
 
-									<td rowSpan={trip.blocks.length}>{trip.creditValue}</td>
-									<td rowSpan={trip.blocks.length}>{trip.timeAwayFromBase}</td>
+									<td rowSpan={trip.blocks.length}>{formatTime(trip.creditValue)}</td>
+									<td rowSpan={trip.blocks.length}>
+										{formatTime(trip.timeAwayFromBase)}
+									</td>
 								</tr>
 
 								{trip.blocks.slice(1).map((block: Block, i: number) => (
@@ -97,10 +115,12 @@ export default function Rotations({ trips }) {
 function BlockCols({ block }: { block: Block }) {
 	return (
 		<>
-			<td>{block.date.slice(0, 10)}</td>
+			<td className="whitespace-nowrap">
+				{block.date.length > 0 && formatDate(block.date)}
+			</td>
 			<td>{block.startAirport}</td>
 			<td>{block.endAirport}</td>
-			<td>{block.duration}</td>
+			<td>{formatTime(block.duration)}</td>
 			<td>{block.mileage}</td>
 			<td>{block.layover && block.endAirport}</td>
 			<td>{block.aircraftLetter}</td>
