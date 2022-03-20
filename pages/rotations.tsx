@@ -6,10 +6,8 @@ import { Trip, Block, getTrips } from '../lib/trips';
 
 export const getServerSideProps: GetServerSideProps = async () => {
 	const trips = await getTrips();
-	return { props: { trips } };
-};
 
-export default function Rotations({ trips }) {
+	// Set block dates to '' if they are the same as the previous
 	trips.forEach((trip: Trip) => {
 		let prevDate = trip.blocks[0].date;
 
@@ -22,6 +20,10 @@ export default function Rotations({ trips }) {
 		}
 	});
 
+	return { props: { trips } };
+};
+
+export default function Rotations({ trips }) {
 	return (
 		<div className="flex h-screen flex-col items-center gap-2 p-4">
 			<Head>

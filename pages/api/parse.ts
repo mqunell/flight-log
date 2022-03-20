@@ -36,19 +36,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 	const records = parseCsv(rawText);
 	const json = formatJson(records);
 
-	json.forEach((trip: Trip) => saveTrip(trip));
+	// json.forEach((trip: Trip) => saveTrip(trip));
 
 	res.status(200).json(json);
 }
 
 // Convert "hh:mm" to minutes
-function convertToMinutes(input: String): number {
+function convertToMinutes(input: string): number {
 	const hoursMinutes = input.split(':');
 
 	const hours = parseInt(hoursMinutes[0]);
 	const minutes = parseInt(hoursMinutes[1]);
 
 	return hours * 60 + minutes;
+}
+
+// Convert "mm/dd/yyyy" to "yyyy-mm-dd"
+function formatDate(input: string): string {
+	const [m, d, y] = input.split('/');
+	return `${y}-${m}-${d}`;
 }
 
 // Read and parse the CSV file, skipping the first two lines - becomes a [[string]]
@@ -91,7 +97,7 @@ function formatJson(records: string[][]): Trip[] {
 
 		// Parse the Block and add it to currentTrip.blocks
 		const rowBlock: Block = {
-			date: prevDate,
+			date: formatDate(prevDate),
 			startAirport: row[DEPARTURE_AIRPORT],
 			endAirport: row[ARRIVAL_AIRPORT],
 			duration: convertToMinutes(row[BLOCK_TIME]),
