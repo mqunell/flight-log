@@ -85,56 +85,11 @@ export default function AddConfirm({ isOpen, close, resetForm, pendingTrip }) {
 								Confirm Data
 							</Dialog.Title>
 
-							<div>
-								{/* Rotation */}
-								<p>
-									Rotation: <span className="font-medium">{pendingTrip.rotation}</span>
-								</p>
-
-								<div className="grid grid-cols-2">
-									<p>
-										Trip number: <span className="font-medium">{tripNumber}</span>
-									</p>
-									<p className="text-right">
-										Credit value:{' '}
-										<span className="font-medium">{pendingTrip.creditValue}</span>
-									</p>
-									<p>
-										Trip length: <span className="font-medium">{getTripLength()}</span>
-									</p>
-									<p className="text-right">
-										Time away:{' '}
-										<span className="font-medium">{pendingTrip.timeAwayFromBase}</span>
-									</p>
-								</div>
-
-								{/* Blocks */}
-								{pendingTrip.blocks.map((block, index: number) => (
-									<Fragment key={`${pendingTrip.rotation}-${index}`}>
-										<hr className="my-2" />
-
-										{(index === 0 ||
-											block.date !== pendingTrip.blocks[index - 1].date) && (
-											<p className="font-medium">{block.date}</p>
-										)}
-										<div className="grid grid-cols-2">
-											<p>
-												{block.startAirport.toUpperCase()} &gt;{' '}
-												{block.endAirport.toUpperCase()}
-												{block.layover && ' ⏸'}
-											</p>
-											<p className="text-right">
-												{block.aircraftLetter} {block.aircraftNumber} -{' '}
-												{block.aircraftBody}
-											</p>
-											<p>
-												{block.duration}, {block.mileage} miles
-											</p>
-											<p className="text-right">Flight #{block.flightNumber}</p>
-										</div>
-									</Fragment>
-								))}
-							</div>
+							<ConfirmationData
+								pendingTrip={pendingTrip}
+								tripNumber={tripNumber}
+								tripLength={getTripLength()}
+							/>
 
 							<input
 								type="button"
@@ -147,5 +102,55 @@ export default function AddConfirm({ isOpen, close, resetForm, pendingTrip }) {
 				</Dialog>
 			)}
 		</AnimatePresence>
+	);
+}
+
+function ConfirmationData({ pendingTrip, tripNumber, tripLength }) {
+	return (
+		<Dialog.Description>
+			{/* Rotation */}
+			<p>
+				Rotation: <span className="font-medium">{pendingTrip.rotation}</span>
+			</p>
+
+			<div className="grid grid-cols-2">
+				<p>
+					Trip number: <span className="font-medium">{tripNumber}</span>
+				</p>
+				<p className="text-right">
+					Credit value: <span className="font-medium">{pendingTrip.creditValue}</span>
+				</p>
+				<p>
+					Trip length: <span className="font-medium">{tripLength}</span>
+				</p>
+				<p className="text-right">
+					Time away: <span className="font-medium">{pendingTrip.timeAwayFromBase}</span>
+				</p>
+			</div>
+
+			{/* Blocks */}
+			{pendingTrip.blocks.map((block, index: number) => (
+				<Fragment key={`${pendingTrip.rotation}-${index}`}>
+					<hr className="my-2" />
+
+					{(index === 0 || block.date !== pendingTrip.blocks[index - 1].date) && (
+						<p className="font-medium">{block.date}</p>
+					)}
+					<div className="grid grid-cols-2">
+						<p>
+							{block.startAirport.toUpperCase()} &gt; {block.endAirport.toUpperCase()}
+							{block.layover && ' ⏸'}
+						</p>
+						<p className="text-right">
+							{block.aircraftLetter} {block.aircraftNumber} - {block.aircraftBody}
+						</p>
+						<p>
+							{block.duration}, {block.mileage} miles
+						</p>
+						<p className="text-right">Flight #{block.flightNumber}</p>
+					</div>
+				</Fragment>
+			))}
+		</Dialog.Description>
 	);
 }

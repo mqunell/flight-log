@@ -76,34 +76,7 @@ export default function Rotations({ trips }) {
 					</thead>
 					<tbody>
 						{trips.map((trip: Trip, index: number) => (
-							<Fragment key={trip.tripNumber}>
-								<tr
-									className={classNames(
-										'border-t-2 border-black',
-										index % 2 === 0 ? 'bg-gray-50' : 'bg-gray-200'
-									)}
-								>
-									<td rowSpan={trip.blocks.length}>{trip.tripNumber}</td>
-									<td rowSpan={trip.blocks.length}>{trip.rotation}</td>
-									<td rowSpan={trip.blocks.length}>{trip.tripLength}</td>
-
-									<BlockCols block={trip.blocks[0]} />
-
-									<td rowSpan={trip.blocks.length}>{formatTime(trip.creditValue)}</td>
-									<td rowSpan={trip.blocks.length}>
-										{formatTime(trip.timeAwayFromBase)}
-									</td>
-								</tr>
-
-								{trip.blocks.slice(1).map((block: Block, i: number) => (
-									<tr
-										key={`${trip.tripNumber}-${i}`}
-										className={index % 2 === 0 ? 'bg-gray-50' : 'bg-gray-200'}
-									>
-										<BlockCols block={block} />
-									</tr>
-								))}
-							</Fragment>
+							<TripRow key={index} trip={trip} index={index} />
 						))}
 					</tbody>
 				</table>
@@ -112,7 +85,38 @@ export default function Rotations({ trips }) {
 	);
 }
 
-function BlockCols({ block }: { block: Block }) {
+function TripRow({ trip, index }: { trip: Trip; index: number }) {
+	return (
+		<Fragment key={trip.tripNumber}>
+			<tr
+				className={classNames(
+					'border-t-2 border-black',
+					index % 2 === 0 ? 'bg-gray-50' : 'bg-gray-200'
+				)}
+			>
+				<td rowSpan={trip.blocks.length}>{trip.tripNumber}</td>
+				<td rowSpan={trip.blocks.length}>{trip.rotation}</td>
+				<td rowSpan={trip.blocks.length}>{trip.tripLength}</td>
+
+				<BlockRow block={trip.blocks[0]} />
+
+				<td rowSpan={trip.blocks.length}>{formatTime(trip.creditValue)}</td>
+				<td rowSpan={trip.blocks.length}>{formatTime(trip.timeAwayFromBase)}</td>
+			</tr>
+
+			{trip.blocks.slice(1).map((block: Block, i: number) => (
+				<tr
+					key={`${trip.tripNumber}-${i}`}
+					className={index % 2 === 0 ? 'bg-gray-50' : 'bg-gray-200'}
+				>
+					<BlockRow block={block} />
+				</tr>
+			))}
+		</Fragment>
+	);
+}
+
+function BlockRow({ block }: { block: Block }) {
 	return (
 		<>
 			<td className="whitespace-nowrap">
