@@ -113,7 +113,10 @@ export default function AddConfirm({ isOpen, close, resetForm, pendingTrip }) {
 									<Fragment key={`${pendingTrip.rotation}-${index}`}>
 										<hr className="my-2" />
 
-										<p className="font-medium">{block.date}</p>
+										{(index === 0 ||
+											block.date !== pendingTrip.blocks[index - 1].date) && (
+											<p className="font-medium">{block.date}</p>
+										)}
 										<div className="grid grid-cols-2">
 											<p>
 												{block.startAirport.toUpperCase()} &gt;{' '}
