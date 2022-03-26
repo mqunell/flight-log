@@ -127,9 +127,9 @@ function BlockRow({ block }: { block: Block }) {
 			<td>{formatTime(block.duration)}</td>
 			<td>{block.mileage}</td>
 			<td>{block.layover && block.endAirport}</td>
-			<td>{block.aircraftLetter}</td>
-			<td>{block.aircraftNumber}</td>
-			<td>{block.aircraftBody}</td>
+			<td>{block.aircraft.make}</td>
+			<td>{block.aircraft.model}</td>
+			<td>{block.aircraft.body}</td>
 			<td>{block.flightNumber}</td>
 		</>
 	);

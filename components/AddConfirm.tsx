@@ -38,9 +38,11 @@ export default function AddConfirm({ isOpen, close, resetForm, pendingTrip }) {
 				duration: convertToMinutes(pendingBlock.duration),
 				mileage: parseInt(pendingBlock.mileage),
 				layover: pendingBlock.layover,
-				aircraftLetter: pendingBlock.aircraftLetter,
-				aircraftNumber: pendingBlock.aircraftNumber,
-				aircraftBody: pendingBlock.aircraftBody,
+				aircraft: {
+					make: pendingBlock.aircraft.make,
+					model: pendingBlock.aircraft.model,
+					body: pendingBlock.aircraft.body,
+				},
 				flightNumber: parseInt(pendingBlock.flightNumber),
 			})),
 			creditValue: convertToMinutes(pendingTrip.creditValue),
@@ -129,25 +131,27 @@ function ConfirmationData({ pendingTrip, tripNumber, tripLength }) {
 			</div>
 
 			{/* Blocks */}
-			{pendingTrip.blocks.map((block, index: number) => (
+			{pendingTrip.blocks.map((pendingBlock, index: number) => (
 				<Fragment key={`${pendingTrip.rotation}-${index}`}>
 					<hr className="my-2" />
 
-					{(index === 0 || block.date !== pendingTrip.blocks[index - 1].date) && (
-						<p className="font-medium">{block.date}</p>
+					{(index === 0 || pendingBlock.date !== pendingTrip.blocks[index - 1].date) && (
+						<p className="font-medium">{pendingBlock.date}</p>
 					)}
 					<div className="grid grid-cols-2">
 						<p>
-							{block.startAirport.toUpperCase()} &gt; {block.endAirport.toUpperCase()}
-							{block.layover && ' ⏸'}
+							{pendingBlock.startAirport.toUpperCase()} &gt;{' '}
+							{pendingBlock.endAirport.toUpperCase()}
+							{pendingBlock.layover && ' ⏸'}
 						</p>
 						<p className="text-right">
-							{block.aircraftLetter} {block.aircraftNumber} - {block.aircraftBody}
+							{pendingBlock.aircraft.make} {pendingBlock.aircraft.model} -{' '}
+							{pendingBlock.aircraft.body}
 						</p>
 						<p>
-							{block.duration}, {block.mileage} miles
+							{pendingBlock.duration}, {pendingBlock.mileage} miles
 						</p>
-						<p className="text-right">Flight #{block.flightNumber}</p>
+						<p className="text-right">Flight #{pendingBlock.flightNumber}</p>
 					</div>
 				</Fragment>
 			))}

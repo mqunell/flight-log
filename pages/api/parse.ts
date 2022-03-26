@@ -20,9 +20,9 @@ const [
 	BLOCK_TIME,
 	MILEAGE,
 	LAYOVER,
-	AIRCRAFT_LETTER,
-	AIRCRAFT_NUMBER,
-	BODY_TYPE,
+	AIRCRAFT_MAKE,
+	AIRCRAFT_MODEL,
+	AIRCRAFT_BODY,
 	FLIGHT_NUMBER,
 
 	CREDIT_VALUE,
@@ -103,9 +103,11 @@ function formatJson(records: string[][]): Trip[] {
 			duration: convertToMinutes(row[BLOCK_TIME]),
 			mileage: parseInt(row[MILEAGE]),
 			layover: row[LAYOVER].length > 0,
-			aircraftLetter: row[AIRCRAFT_LETTER] as 'A' | 'B' | 'O',
-			aircraftNumber: row[AIRCRAFT_NUMBER],
-			aircraftBody: row[BODY_TYPE] as 'N' | 'W',
+			aircraft: {
+				make: row[AIRCRAFT_MAKE] as 'A' | 'B' | 'O',
+				model: row[AIRCRAFT_MODEL],
+				body: row[AIRCRAFT_BODY] as 'N' | 'W',
+			},
 			flightNumber: parseInt(row[FLIGHT_NUMBER]),
 		};
 

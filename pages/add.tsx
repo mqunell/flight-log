@@ -174,12 +174,12 @@ export default function Add() {
 						</label>
 
 						<label>
-							Aircraft Letter
+							Aircraft Make
 							<input
 								type="text"
 								className="focus:ring-offset-slate-500"
 								placeholder="A"
-								{...register(`blocks.${index}.aircraftLetter`, {
+								{...register(`blocks.${index}.aircraft.make`, {
 									pattern: /[A-Z]{1}/,
 									required: true,
 								})}
@@ -188,12 +188,12 @@ export default function Add() {
 						</label>
 
 						<label>
-							Aircraft #
+							Aircraft Model
 							<input
 								type="text"
 								className="focus:ring-offset-slate-500"
 								placeholder="737"
-								{...register(`blocks.${index}.aircraftNumber`, {
+								{...register(`blocks.${index}.aircraft.model`, {
 									required: true,
 								})}
 								onChange={capitalizeField}
@@ -207,7 +207,7 @@ export default function Add() {
 								className="focus:ring-offset-slate-500"
 								placeholder="N"
 								defaultValue="N"
-								{...register(`blocks.${index}.aircraftBody`, {
+								{...register(`blocks.${index}.aircraft.body`, {
 									pattern: /[A-Z]{1}/,
 									required: true,
 								})}

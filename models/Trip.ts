@@ -15,14 +15,16 @@ const tripSchema = new mongoose.Schema({
 			duration: Number, // minutes
 			mileage: Number,
 			layover: Boolean,
-			aircraftLetter: {
-				type: String,
-				enum: ['A', 'B', 'O'],
-			},
-			aircraftNumber: String,
-			aircraftBody: {
-				type: String,
-				enum: ['N', 'W'],
+			aircraft: {
+				make: {
+					type: String,
+					enum: ['A', 'B', 'O'], // Airbus, Boeing, other
+				},
+				model: String,
+				body: {
+					type: String,
+					enum: ['N', 'W'], // narrow, wide
+				},
 			},
 			flightNumber: Number,
 		},

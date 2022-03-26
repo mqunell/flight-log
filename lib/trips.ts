@@ -17,9 +17,11 @@ export interface Block {
 	duration: number; // minutes
 	mileage: number;
 	layover: boolean;
-	aircraftLetter: 'A' | 'B' | 'O';
-	aircraftNumber: string;
-	aircraftBody: 'N' | 'W';
+	aircraft: {
+		make: 'A' | 'B' | 'O'; // Airbus, Boeing, other
+		model: string;
+		body: 'N' | 'W'; // narrow, wide
+	};
 	flightNumber: number;
 }
 

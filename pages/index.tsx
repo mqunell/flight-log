@@ -17,11 +17,11 @@ export const getServerSideProps: GetServerSideProps = async () => {
 		timeInAir: allBlocks.reduce((acc, block) => acc + block.duration, 0),
 		credits: trips.reduce((acc, trip) => acc + trip.creditValue, 0),
 		timeAway: trips.reduce((acc, trip) => acc + trip.timeAwayFromBase, 0),
-		airbus: allBlocks.filter((block) => block.aircraftLetter === 'A').length,
-		boeing: allBlocks.filter((block) => block.aircraftLetter === 'B').length,
-		other: allBlocks.filter((block) => block.aircraftLetter === 'O').length,
-		narrow: allBlocks.filter((block) => block.aircraftBody === 'N').length,
-		wide: allBlocks.filter((block) => block.aircraftBody === 'W').length,
+		airbus: allBlocks.filter((block) => block.aircraft.make === 'A').length,
+		boeing: allBlocks.filter((block) => block.aircraft.make === 'B').length,
+		other: allBlocks.filter((block) => block.aircraft.make === 'O').length,
+		narrow: allBlocks.filter((block) => block.aircraft.body === 'N').length,
+		wide: allBlocks.filter((block) => block.aircraft.body === 'W').length,
 	};
 
 	return { props: { totals } };
