@@ -23,9 +23,9 @@ export const getServerSideProps: GetServerSideProps = async () => {
 	return { props: { trips } };
 };
 
-// Convert "yyyy-mm-dd" to "mm/dd/yyyy"
-const formatDate = (date: string): string => {
-	const [y, m, d] = date.split('-');
+// Convert "yyyy-mm-dd" to "mm/dd/yyyy" for displaying
+const formatDate = (dateString: string): string => {
+	const [y, m, d] = dateString.split('-');
 
 	return `${m.toString().padStart(2, '0')}/${d.toString().padStart(2, '0')}/${y}`;
 };

@@ -108,6 +108,15 @@ export default function AddConfirm({ isOpen, close, resetForm, pendingTrip }) {
 }
 
 function ConfirmationData({ pendingTrip, tripNumber, tripLength }) {
+	// Convert "yyyy-mm-dd" to "ddMMM yyyy" for displaying
+	const formatDate = (dateString: string): string => {
+		const [y, m, d] = dateString.split('-');
+
+		const monthText = new Date(dateString).toLocaleString('en-US', { month: 'short' });
+
+		return `${d}${monthText} ${y}`;
+	};
+
 	return (
 		<Dialog.Description>
 			{/* Rotation */}
@@ -136,7 +145,7 @@ function ConfirmationData({ pendingTrip, tripNumber, tripLength }) {
 					<hr className="my-2" />
 
 					{(index === 0 || pendingBlock.date !== pendingTrip.blocks[index - 1].date) && (
-						<p className="font-medium">{pendingBlock.date}</p>
+						<p className="font-medium">{formatDate(pendingBlock.date)}</p>
 					)}
 					<div className="grid grid-cols-2">
 						<p>
