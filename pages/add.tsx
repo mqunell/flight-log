@@ -2,6 +2,13 @@ import { Fragment, useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import AddConfirm from '../components/AddConfirm';
 
+// Aircrafts with wide bodies
+const wideAircrafts = [
+	{ make: 'A', model: '330' },
+	{ make: 'A', model: '350' },
+	{ make: 'B', model: '767' },
+];
+
 /**
  * Add form needs to get:
  *   trip: rotation #, credit value, time away - everything else calculated by blocks
@@ -15,12 +22,27 @@ export default function Add() {
 		setValue,
 		handleSubmit,
 		reset,
+		watch,
 		formState: { errors },
 	} = useForm();
 
 	const { fields, append, remove } = useFieldArray({ control, name: 'blocks' });
 
 	const [showModal, setShowModal] = useState(false);
+
+	// Change handler for blocks' make and model fields to set body to 'W' if applicable
+	const watchMakeModel = ({ target }) => {
+		const { name } = target; // ex: 'blocks.0.aircraft.make'
+
+		const index = parseInt(name.split('.')[1]);
+		const inputAircraft = watch('blocks')[index].aircraft;
+
+		wideAircrafts.forEach(({ make, model }) => {
+			if (inputAircraft.make === make && inputAircraft.model === model) {
+				setValue(`blocks.${index}.aircraft.body`, 'W');
+			}
+		});
+	};
 
 	// Capitalize a field as it is typed in
 	const capitalizeField = ({ target }) => {
@@ -178,12 +200,15 @@ export default function Add() {
 							<input
 								type="text"
 								className="focus:ring-offset-slate-500"
-								placeholder="A"
+								placeholder="(A)irbus, (B)oeing, (O)ther"
 								{...register(`blocks.${index}.aircraft.make`, {
 									pattern: /[A-Z]{1}/,
 									required: true,
 								})}
-								onChange={capitalizeField}
+								onChange={(e) => {
+									capitalizeField(e);
+									watchMakeModel(e);
+								}}
 							/>
 						</label>
 
@@ -196,7 +221,10 @@ export default function Add() {
 								{...register(`blocks.${index}.aircraft.model`, {
 									required: true,
 								})}
-								onChange={capitalizeField}
+								onChange={(e) => {
+									capitalizeField(e);
+									watchMakeModel(e);
+								}}
 							/>
 						</label>
 
@@ -205,8 +233,7 @@ export default function Add() {
 							<input
 								type="text"
 								className="focus:ring-offset-slate-500"
-								placeholder="N"
-								defaultValue="N"
+								placeholder="(N)arrow, (W)ide"
 								{...register(`blocks.${index}.aircraft.body`, {
 									pattern: /[A-Z]{1}/,
 									required: true,
