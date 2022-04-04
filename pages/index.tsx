@@ -3,38 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import UsaMap from '../components/UsaMap';
 import { Trip, Block, getTrips } from '../lib/trips';
-
-const cityStates = [
-	{ airportCode: 'ATL', city: 'Atlanta', state: 'GA' },
-	{ airportCode: 'AUS', city: 'Austin', state: 'TX' },
-	{ airportCode: 'BIL', city: 'Billings', state: 'MT' },
-	{ airportCode: 'BOS', city: 'Boston', state: 'MA' },
-	{ airportCode: 'CLT', city: 'Charlotte', state: 'NC' },
-	{ airportCode: 'DCA', city: 'Washington D.C.', state: 'DC' },
-	{ airportCode: 'DEN', city: 'Denver', state: 'CO' },
-	{ airportCode: 'DFW', city: 'Dallas-Fort Worth', state: 'TX' },
-	{ airportCode: 'DTW', city: 'Detroit', state: 'MI' },
-	{ airportCode: 'FLL', city: 'Fort Lauderdale', state: 'FL' },
-	{ airportCode: 'FSD', city: 'Sioux Falls', state: 'SD' },
-	{ airportCode: 'GRR', city: 'Grand Rapids', state: 'MI' },
-	{ airportCode: 'GSO', city: 'Greensboro', state: 'NC' },
-	{ airportCode: 'JAX', city: 'Jacksonville', state: 'FL' },
-	{ airportCode: 'LAS', city: 'Las Vegas', state: 'NV' },
-	{ airportCode: 'LGA', city: 'New York', state: 'NY' },
-	{ airportCode: 'MCI', city: 'Kansas City', state: 'MO' },
-	{ airportCode: 'MSP', city: 'Minneapolis', state: 'MN' },
-	{ airportCode: 'MSY', city: 'New Orleans', state: 'LA' },
-	{ airportCode: 'ORD', city: 'Chicago', state: 'IL' },
-	{ airportCode: 'PHX', city: 'Phoenix', state: 'AZ' },
-	{ airportCode: 'RDU', city: 'Raleigh-Durham', state: 'NC' },
-	{ airportCode: 'RIC', city: 'Richmond', state: 'VA' },
-	{ airportCode: 'RSW', city: 'Fort Myers', state: 'FL' },
-	{ airportCode: 'SAT', city: 'San Antonio', state: 'TX' },
-	{ airportCode: 'SEA', city: 'Seattle', state: 'WA' },
-	{ airportCode: 'SRQ', city: 'Sarasota', state: 'FL' },
-	{ airportCode: 'STL', city: 'St. Louis', state: 'MO' },
-	{ airportCode: 'TPA', city: 'Tampa', state: 'FL' },
-];
+import { Airport, State, airports, states } from '../lib/airports';
 
 export const getServerSideProps: GetServerSideProps = async () => {
 	const trips = await getTrips();
@@ -42,6 +11,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
 	const allBlocks: Block[] = [];
 	trips.forEach((trip: Trip) => allBlocks.push(...trip.blocks));
 
+	// Calculate total values across all trips/blocks
 	const totals = {
 		trips: trips.length,
 		blocks: allBlocks.length,
@@ -57,14 +27,20 @@ export const getServerSideProps: GetServerSideProps = async () => {
 			narrow: allBlocks.filter((block) => block.aircraft.body === 'N').length,
 			wide: allBlocks.filter((block) => block.aircraft.body === 'W').length,
 		},
-		stateCounts: {},
+		stateCounts: {}, // { stateAbbr: numFlights }
 	};
 
-	allBlocks.forEach((block) => {
-		const endState = cityStates.find((cs) => cs.airportCode === block.endAirport)?.state;
-		if (!endState) return;
+	// Count times flown to each state
+	allBlocks.forEach(({ endAirport }: Block) => {
+		// Get the Airport from endAirport code and return if not in the US
+		const airport: Airport = airports.find(({ code }: Airport) => code === endAirport);
+		if (!airport) return;
 
-		totals.stateCounts[endState] = (totals.stateCounts[endState] || 0) + 1;
+		// Get the State.abbr from Airport.state
+		const state: State = states.find((state: State) => state.name === airport.state);
+		const stateAbbr = state.abbr;
+
+		totals.stateCounts[stateAbbr] = (totals.stateCounts[stateAbbr] || 0) + 1;
 	});
 
 	return { props: { totals } };
