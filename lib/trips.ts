@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import dbConnect from './dbConnect';
 import DbTrip from '../models/Trip';
 
@@ -8,6 +9,10 @@ export interface Trip {
 	blocks: Block[];
 	creditValue: number; // minutes
 	timeAwayFromBase: number; // minutes
+}
+
+interface MongoTrip extends Trip {
+	_id: mongoose.Types.ObjectId;
 }
 
 export interface Block {
@@ -25,10 +30,8 @@ export interface Block {
 	flightNumber: number;
 }
 
-export interface City {
-	airportCode: string;
-	city: string;
-	state: string;
+interface MongoBlock extends Block {
+	_id: mongoose.Types.ObjectId;
 }
 
 export async function saveTrip(trip: Trip) {
@@ -36,8 +39,8 @@ export async function saveTrip(trip: Trip) {
 
 	new DbTrip(trip)
 		.save()
-		.then((newTrip) => console.log(`${newTrip.tripNumber} saved`))
-		.catch((error) => console.log(error));
+		.then((newTrip: MongoTrip) => console.log(`${newTrip.tripNumber} saved`))
+		.catch((error: Error) => console.log(error));
 }
 
 export async function getTrips(): Promise<Trip[]> {
@@ -51,7 +54,7 @@ export async function getTrips(): Promise<Trip[]> {
 			const trip = doc.toObject();
 			delete trip._id;
 
-			trip.blocks.forEach((block) => {
+			trip.blocks.forEach((block: MongoBlock) => {
 				delete block._id;
 			});
 
