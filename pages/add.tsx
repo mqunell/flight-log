@@ -68,7 +68,10 @@ export default function Add() {
 						type="text"
 						className="focus:ring-offset-slate-500"
 						placeholder="1234"
-						{...register('rotation', { required: true })}
+						{...register('rotation', {
+							pattern: /[a-zA-Z\d]{4}/,
+							required: true,
+						})}
 						onChange={capitalizeField}
 					/>
 				</label>
@@ -202,7 +205,7 @@ export default function Add() {
 								className="focus:ring-offset-slate-500"
 								placeholder="(A)irbus, (B)oeing, (O)ther"
 								{...register(`blocks.${index}.aircraft.make`, {
-									pattern: /[A-Z]{1}/,
+									pattern: /[ABO]{1}/,
 									required: true,
 								})}
 								onChange={(e) => {
@@ -235,7 +238,7 @@ export default function Add() {
 								className="focus:ring-offset-slate-500"
 								placeholder="(N)arrow, (W)ide"
 								{...register(`blocks.${index}.aircraft.body`, {
-									pattern: /[A-Z]{1}/,
+									pattern: /[NW]{1}/,
 									required: true,
 								})}
 								onChange={capitalizeField}
