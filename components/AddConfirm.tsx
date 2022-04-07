@@ -43,8 +43,9 @@ export default function AddConfirm({ isOpen, close, resetForm, pendingTrip }: Pr
 		// Get next trip number
 		axios.get('/api/tripNumber').then((res) => setTripNumber(res.data.tripNumber));
 
-		// Calculate trip length
+		// Calculate trip length or return if no blocks yet (the modal is rendered before data is verified)
 		const { blocks } = pendingTrip;
+		if (!blocks) return;
 
 		let count = 1;
 		for (let i = 1; i < blocks.length; i++) {
