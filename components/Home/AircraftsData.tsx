@@ -12,7 +12,7 @@ interface AircraftData {
 	mileage: number;
 }
 
-export default function Aircrafts({ blocks }: Props) {
+export default function AircraftsData({ blocks }: Props) {
 	const data: AircraftData[] = [];
 
 	// Aggregate aircraft data by make and model
@@ -50,7 +50,7 @@ export default function Aircrafts({ blocks }: Props) {
 			<tbody>
 				{data.map(({ make, model, count, duration, mileage }: AircraftData) => (
 					<tr key={`${make}${model}`}>
-						<td>{`${make}${model}`}</td>
+						<th>{`${make}${model}`}</th>
 						<td>{count}</td>
 						<td>{duration}</td>
 						<td>{mileage}</td>

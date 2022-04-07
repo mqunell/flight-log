@@ -5,7 +5,7 @@ interface Props {
 	blocks: Block[];
 }
 
-export default function Overall({ trips, blocks }: Props) {
+export default function OverallData({ trips, blocks }: Props) {
 	// Calculate total values across all trips/blocks
 	const totals = {
 		trips: trips.length,

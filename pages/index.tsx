@@ -1,8 +1,9 @@
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
-import Aircrafts from '../components/Home/Aircrafts';
-import Overall from '../components/Home/Overall';
+import AircraftsData from '../components/Home/AircraftsData';
+import OverallData from '../components/Home/OverallData';
+import TripsData from '../components/Home/TripsData';
 import UsaMap from '../components/Home/UsaMap';
 import { Trip, Block, getTrips } from '../lib/trips';
 
@@ -31,8 +32,9 @@ export default function Home({ trips, blocks }) {
 				<a className="text-blue-300 hover:underline">Add</a>
 			</Link>
 
-			<Overall trips={trips} blocks={blocks} />
-			<Aircrafts blocks={blocks} />
+			<OverallData trips={trips} blocks={blocks} />
+			<AircraftsData blocks={blocks} />
+			<TripsData trips={trips} />
 			<UsaMap blocks={blocks} />
 		</div>
 	);
