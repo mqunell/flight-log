@@ -1,11 +1,11 @@
-import { Block } from '../../lib/trips';
+import { AircraftMake, Block } from '../../lib/trips';
 
 interface Props {
 	blocks: Block[];
 }
 
 interface AircraftData {
-	make: 'A' | 'B' | 'O';
+	make: AircraftMake;
 	model: string;
 	count: number;
 	duration: number;

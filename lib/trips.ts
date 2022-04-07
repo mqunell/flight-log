@@ -11,10 +11,6 @@ export interface Trip {
 	timeAwayFromBase: number; // minutes
 }
 
-interface MongoTrip extends Trip {
-	_id: mongoose.Types.ObjectId;
-}
-
 export interface Block {
 	date: string;
 	startAirport: string;
@@ -23,17 +19,25 @@ export interface Block {
 	mileage: number;
 	layover: boolean;
 	aircraft: {
-		make: 'A' | 'B' | 'O'; // Airbus, Boeing, other
+		make: AircraftMake;
 		model: string;
-		body: 'N' | 'W'; // narrow, wide
+		body: AircraftBody;
 	};
 	flightNumber: number;
+}
+
+export type AircraftMake = 'A' | 'B' | 'O'; // Airbus, Boeing, other
+export type AircraftBody = 'N' | 'W'; // narrow, wide
+
+interface MongoTrip extends Trip {
+	_id: mongoose.Types.ObjectId;
 }
 
 interface MongoBlock extends Block {
 	_id: mongoose.Types.ObjectId;
 }
 
+// Save a new Trip to the database
 export async function saveTrip(trip: Trip) {
 	await dbConnect();
 
@@ -43,12 +47,13 @@ export async function saveTrip(trip: Trip) {
 		.catch((error: Error) => console.log(error));
 }
 
+// Get serializable Trips from the database
 export async function getTrips(): Promise<Trip[]> {
 	await dbConnect();
 
 	const docs = await DbTrip.find();
 
-	// Remove _id ObjectId from each database object
+	// Remove _id ObjectId from each database object and sort by tripNumber
 	const trips = docs
 		.map((doc) => {
 			const trip = doc.toObject();

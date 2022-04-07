@@ -2,6 +2,7 @@ import { Fragment, useEffect, useState } from 'react';
 import { Dialog } from '@headlessui/react';
 import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion';
+import { AircraftBody, AircraftMake } from '../lib/trips';
 
 interface Props {
 	isOpen: boolean;
@@ -26,9 +27,9 @@ interface PendingBlock {
 	mileage: string;
 	layover: boolean;
 	aircraft: {
-		make: 'A' | 'B' | 'O';
+		make: AircraftMake;
 		model: string;
-		body: 'N' | 'W';
+		body: AircraftBody;
 	};
 	flightNumber: string;
 }
