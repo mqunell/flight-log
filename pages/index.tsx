@@ -1,6 +1,7 @@
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
+import Aircrafts from '../components/Home/Aircrafts';
 import Overall from '../components/Home/Overall';
 import UsaMap from '../components/Home/UsaMap';
 import { Trip, Block, getTrips } from '../lib/trips';
@@ -31,6 +32,7 @@ export default function Home({ trips, blocks }) {
 			</Link>
 
 			<Overall trips={trips} blocks={blocks} />
+			<Aircrafts blocks={blocks} />
 			<UsaMap blocks={blocks} />
 		</div>
 	);
