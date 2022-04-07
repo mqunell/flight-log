@@ -1,18 +1,17 @@
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
-import UsaMap from '../components/UsaMap';
+import UsaMap from '../components/Home/UsaMap';
 import { Trip, Block, getTrips } from '../lib/trips';
-import { Airport, State, airports, states } from '../lib/airports';
 
 export const getServerSideProps: GetServerSideProps = async () => {
 	const trips = await getTrips();
 
-	const allBlocks: Block[] = [];
-	trips.forEach((trip: Trip) => allBlocks.push(...trip.blocks));
+	const blocks: Block[] = [];
+	trips.forEach((trip: Trip) => blocks.push(...trip.blocks));
 
 	// Calculate total values across all trips/blocks
-	const totals = {
+	/* const totals = {
 		trips: trips.length,
 		blocks: allBlocks.length,
 		daysFlown: new Set(allBlocks.map((block) => block.date)).size,
@@ -27,26 +26,12 @@ export const getServerSideProps: GetServerSideProps = async () => {
 			narrow: allBlocks.filter((block) => block.aircraft.body === 'N').length,
 			wide: allBlocks.filter((block) => block.aircraft.body === 'W').length,
 		},
-		stateCounts: {}, // { stateAbbr: numFlights }
-	};
+	}; */
 
-	// Count times flown to each state
-	allBlocks.forEach(({ endAirport }: Block) => {
-		// Get the Airport from endAirport code and return if not in the US
-		const airport: Airport = airports.find(({ code }: Airport) => code === endAirport);
-		if (!airport) return;
-
-		// Get the State.abbr from Airport.state
-		const state: State = states.find((state: State) => state.name === airport.state);
-		const stateAbbr = state.abbr;
-
-		totals.stateCounts[stateAbbr] = (totals.stateCounts[stateAbbr] || 0) + 1;
-	});
-
-	return { props: { totals } };
+	return { props: { trips, blocks } };
 };
 
-export default function Home({ totals }) {
+export default function Home({ trips, blocks }) {
 	return (
 		<div className="flex flex-col items-center gap-2 p-4">
 			<Head>
@@ -62,7 +47,7 @@ export default function Home({ totals }) {
 				<a className="text-blue-300 hover:underline">Add</a>
 			</Link>
 
-			<div className="grid grid-cols-2 gap-x-4 gap-y-1 border-t border-white px-4 py-2 text-white">
+			{/* <div className="grid grid-cols-2 gap-x-4 gap-y-1 border-t border-white px-4 py-2 text-white">
 				<TotalsRow label="Trips" value={totals.trips} />
 				<TotalsRow label="Blocks" value={totals.blocks} />
 				<TotalsRow label="Days flown" value={totals.daysFlown} />
@@ -75,18 +60,18 @@ export default function Home({ totals }) {
 				<TotalsRow label="Other" value={totals.aircraft.other} />
 				<TotalsRow label="Narrowbody" value={totals.aircraft.narrow} />
 				<TotalsRow label="Widebody" value={totals.aircraft.wide} />
-			</div>
+			</div> */}
 
-			<UsaMap stateCounts={totals.stateCounts} />
+			<UsaMap blocks={blocks} />
 		</div>
 	);
 }
 
-function TotalsRow({ label, value }) {
+/* function TotalsRow({ label, value }) {
 	return (
 		<>
 			<p className="text-right">{label}</p>
 			<p className="font-bold">{value}</p>
 		</>
 	);
-}
+} */

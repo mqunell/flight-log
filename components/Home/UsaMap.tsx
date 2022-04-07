@@ -1,7 +1,50 @@
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { Block } from '../../lib/trips';
+import { Airport, State, airports, states } from '../../lib/airports';
 
-export default function UsaMap({ stateCounts }) {
-	// Find the state with the most visits after from MN
+interface Props {
+	blocks: Block[];
+}
+
+/**
+ * Container component handles counting flights to states (so it is only done once) and toggles
+ */
+export default function MapContainer({ blocks }: Props) {
+	const [stateCounts, setStateCounts] = useState({}); // { state: numFlights }
+
+	// Count times flown to each state
+	useEffect(() => {
+		const counts = {};
+
+		blocks.forEach(({ endAirport }: Block) => {
+			// Get the Airport from endAirport code and exit if not in the US
+			const airport: Airport = airports.find(({ code }: Airport) => code === endAirport);
+			if (!airport) return;
+
+			// Get the State.abbr from Airport.state
+			const state: State = states.find((state: State) => state.name === airport.state);
+			const stateAbbr: string = state.abbr;
+
+			// Increment the count or initialize to 1
+			counts[stateAbbr] = (counts[stateAbbr] || 0) + 1;
+		});
+
+		setStateCounts(counts);
+	}, [blocks]);
+
+	return (
+		<div className="flex w-full max-w-[600px] flex-col items-center gap-4 rounded-xl bg-white">
+			<div className="flex w-full items-center justify-between">
+				{/* todo: Add toggles here */}
+			</div>
+			<Map stateCounts={stateCounts} />
+		</div>
+	);
+}
+
+function Map({ stateCounts }) {
+	// Find the state with the most visits, aside from MN
 	const visitCounts = Object.keys(stateCounts)
 		.filter((state) => state !== 'MN')
 		.map((state) => stateCounts[state]);
@@ -18,7 +61,7 @@ export default function UsaMap({ stateCounts }) {
 	};
 
 	return (
-		<div className="flex w-full max-w-[600px] flex-col items-center gap-4 rounded-xl bg-white px-1 pt-1 pb-4">
+		<div className="flex w-full flex-col items-center gap-4">
 			{/* Map */}
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
@@ -41,7 +84,7 @@ export default function UsaMap({ stateCounts }) {
 			</svg>
 
 			{/* Legend */}
-			<div className="grid w-2/3 grid-cols-[1fr_auto] gap-4">
+			<div className="mb-4 grid w-2/3 grid-cols-[1fr_auto] gap-4">
 				<div>
 					<div className="h-4 bg-gradient-to-r from-[hsl(0,_100%,_50%)] to-[hsl(120,_100%,_50%)]"></div>
 					<p className="flex justify-between">
