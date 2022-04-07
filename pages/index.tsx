@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import AircraftsData from '../components/Home/AircraftsData';
 import FlightsData from '../components/Home/FlightsData';
+import MiscData from '../components/Home/MiscData';
 import OverallData from '../components/Home/OverallData';
 import TripsData from '../components/Home/TripsData';
 import UsaMap from '../components/Home/UsaMap';
@@ -37,6 +38,7 @@ export default function Home({ trips, blocks }) {
 			<AircraftsData blocks={blocks} />
 			<TripsData trips={trips} />
 			<FlightsData blocks={blocks} />
+			<MiscData blocks={blocks} />
 			<UsaMap blocks={blocks} />
 		</div>
 	);
