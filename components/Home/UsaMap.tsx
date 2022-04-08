@@ -51,9 +51,9 @@ function Map({ stateCounts }) {
 
 	const mostVisited = Math.max(...visitCounts);
 
-	// Calculate the fill color based on the number of visits
+	// Calculate the fill color based on the number of visits (note: color values with transparency must be used)
 	const fillColor = (state: string): string => {
-		if (state === 'MN') return 'rgb(0, 80, 255)';
+		if (state === 'MN') return 'rgba(0, 80, 255, 1)';
 		if (!stateCounts[state]) return 'rgba(0, 0, 0, 0.25)';
 
 		const hue = (stateCounts[state] / mostVisited) * 120;
@@ -73,20 +73,24 @@ function Map({ stateCounts }) {
 						key={state}
 						id={state}
 						d={path}
-						fill={fillColor(state)}
 						stroke="black"
 						strokeWidth="1"
-						initial={{ pathLength: 0 }}
-						animate={{ pathLength: 1 }}
+						initial={{ fill: 'rgba(0, 0, 0, 0)', pathLength: 0 }}
+						animate={{ fill: fillColor(state), pathLength: 1 }}
 						transition={{ duration: 2, ease: 'easeInOut' }}
 					/>
 				))}
 			</svg>
 
 			{/* Legend */}
-			<div className="mb-4 grid w-2/3 grid-cols-[1fr_auto] gap-4">
+			<motion.div
+				initial={{ opacity: 0, y: 20 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ delay: 2, duration: 1, ease: 'easeInOut' }}
+				className="mb-4 grid w-2/3 grid-cols-[1fr_auto] gap-4"
+			>
 				<div>
-					<div className="h-4 bg-gradient-to-r from-[hsl(0,_100%,_50%)] to-[hsl(120,_100%,_50%)]"></div>
+					<div className="h-4 bg-gradient-to-r from-[hsl(0,_100%,_50%)] to-[hsl(120,_100%,_50%)]" />
 					<p className="flex justify-between">
 						<span>1</span>
 						<span>{mostVisited}</span>
@@ -96,7 +100,7 @@ function Map({ stateCounts }) {
 					<div className="h-4 bg-[rgb(0,_80,_255)]"></div>
 					<p className="text-center">Home</p>
 				</div>
-			</div>
+			</motion.div>
 		</div>
 	);
 }
