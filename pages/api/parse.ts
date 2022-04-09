@@ -51,10 +51,9 @@ function convertToMinutes(input: string): number {
 	return hours * 60 + minutes;
 }
 
-// Convert "mm/dd/yyyy" to "yyyy-mm-dd"
+// Convert "Mar 25, 2022" to "yyyy-mm-dd"
 function formatDate(input: string): string {
-	const [m, d, y] = input.split('/');
-	return `${y}-${m}-${d}`;
+	return new Date(input).toISOString().slice(0, 10);
 }
 
 // Read and parse the CSV file, skipping the first two lines - becomes a [[string]]
