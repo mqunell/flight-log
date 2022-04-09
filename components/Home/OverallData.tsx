@@ -1,4 +1,5 @@
 import { Block, Trip } from '../../lib/trips';
+import { daysHoursMinutesText, hoursMinutes, withCommas } from '../../util/formatter';
 
 interface Props {
 	trips: Trip[];
@@ -24,15 +25,23 @@ export default function OverallData({ trips, blocks }: Props) {
 		},
 	};
 
+	const doubleValue = (minutes: number) => (
+		<span>
+			{hoursMinutes(minutes)}
+			<br />
+			<span className="font-normal">({daysHoursMinutesText(minutes)})</span>
+		</span>
+	);
+
 	return (
 		<div className="grid grid-cols-2 gap-x-4 gap-y-1 text-white">
 			<OverallRow label="Trips" value={totals.trips} />
 			<OverallRow label="Blocks" value={totals.blocks} />
 			<OverallRow label="Days flown" value={totals.daysFlown} />
-			<OverallRow label="Miles" value={totals.mileage} />
-			<OverallRow label="Block time" value={totals.duration} />
-			<OverallRow label="Credit value" value={totals.creditValue} />
-			<OverallRow label="Time away" value={totals.timeAwayFromBase} />
+			<OverallRow label="Miles" value={withCommas(totals.mileage)} />
+			<OverallRow label="Block time" value={doubleValue(totals.duration)} />
+			<OverallRow label="Credit value" value={doubleValue(totals.creditValue)} />
+			<OverallRow label="Time away" value={doubleValue(totals.timeAwayFromBase)} />
 			<OverallRow label="Airbus" value={totals.aircraft.airbus} />
 			<OverallRow label="Boeing" value={totals.aircraft.boeing} />
 			<OverallRow label="Other" value={totals.aircraft.other} />

@@ -1,4 +1,5 @@
 import { Trip } from '../../lib/trips';
+import { hoursMinutes } from '../../util/formatter';
 
 interface Props {
 	trips: Trip[];
@@ -67,10 +68,10 @@ export default function TripsData({ trips }: Props) {
 						<tr key={tripLength}>
 							<th>{tripLength}</th>
 							<td>{count}</td>
-							<td>{creditMin}</td>
-							<td>{creditMax}</td>
-							<td>{timeAwayMin}</td>
-							<td>{timeAwayMax}</td>
+							<td>{hoursMinutes(creditMin)}</td>
+							<td>{hoursMinutes(creditMax)}</td>
+							<td>{hoursMinutes(timeAwayMin)}</td>
+							<td>{hoursMinutes(timeAwayMax)}</td>
 						</tr>
 					)
 				)}

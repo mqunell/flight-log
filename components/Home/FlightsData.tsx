@@ -1,4 +1,5 @@
 import { Block } from '../../lib/trips';
+import { hoursMinutes, withCommas } from '../../util/formatter';
 
 interface Props {
 	blocks: Block[];
@@ -32,16 +33,16 @@ export default function FlightsData({ blocks }: Props) {
 					<th>Shortest Flight</th>
 					<td>{blockMin.startAirport}</td>
 					<td>{blockMin.endAirport}</td>
-					<td>{blockMin.mileage}</td>
-					<td>{blockMin.duration}</td>
+					<td>{withCommas(blockMin.mileage)}</td>
+					<td>{hoursMinutes(blockMin.duration)}</td>
 				</tr>
 
 				<tr>
 					<th>Longest Flight</th>
 					<td>{blockMax.startAirport}</td>
 					<td>{blockMax.endAirport}</td>
-					<td>{blockMax.mileage}</td>
-					<td>{blockMax.duration}</td>
+					<td>{withCommas(blockMax.mileage)}</td>
+					<td>{hoursMinutes(blockMax.duration)}</td>
 				</tr>
 			</tbody>
 		</table>

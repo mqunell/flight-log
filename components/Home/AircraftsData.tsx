@@ -1,4 +1,5 @@
 import { AircraftMake, Block } from '../../lib/trips';
+import { hoursMinutes, withCommas } from '../../util/formatter';
 
 interface Props {
 	blocks: Block[];
@@ -52,8 +53,8 @@ export default function AircraftsData({ blocks }: Props) {
 					<tr key={`${make}${model}`}>
 						<th>{`${make}${model}`}</th>
 						<td>{count}</td>
-						<td>{duration}</td>
-						<td>{mileage}</td>
+						<td>{hoursMinutes(duration)}</td>
+						<td>{withCommas(mileage)}</td>
 					</tr>
 				))}
 			</tbody>
