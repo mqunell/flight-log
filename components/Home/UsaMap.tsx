@@ -1,17 +1,27 @@
-import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import classNames from 'classnames';
+import { AnimatePresence, motion } from 'framer-motion';
+import Toggle from '../Toggle';
 import { Block } from '../../lib/trips';
 import { Airport, State, airports, states } from '../../lib/airports';
 
-interface Props {
+interface ContainerProps {
 	blocks: Block[];
+}
+
+interface MapProps {
+	stateCounts: object;
+	maxVisitCount: number;
+	mode: 'dynamic' | 'static';
 }
 
 /**
  * Container component handles counting flights to states (so it is only done once) and toggles
  */
-export default function MapContainer({ blocks }: Props) {
+export default function MapContainer({ blocks }: ContainerProps) {
 	const [stateCounts, setStateCounts] = useState({}); // { state: numFlights }
+	const [maxVisitCount, setMaxVisitCount] = useState(0);
+	const [mode, setMode] = useState<'dynamic' | 'static'>('dynamic');
 
 	// Count times flown to each state
 	useEffect(() => {
@@ -33,79 +43,135 @@ export default function MapContainer({ blocks }: Props) {
 		setStateCounts(counts);
 	}, [blocks]);
 
+	// Find the state with the most visits, aside from MN
+	useEffect(() => {
+		const visitCounts = Object.keys(stateCounts)
+			.filter((state) => state !== 'MN')
+			.map((state) => stateCounts[state]);
+
+		setMaxVisitCount(Math.max(...visitCounts));
+	}, [stateCounts]);
+
 	return (
-		<div className="flex w-full max-w-[600px] flex-col items-center gap-4 rounded-xl bg-white">
-			<div className="flex w-full items-center justify-between">
-				{/* todo: Add toggles here */}
+		<div className="w-full max-w-[600px] rounded-xl bg-white">
+			{/* Toggle */}
+			<div className="mx-4 mt-4">
+				<Toggle
+					text="Show heatmap"
+					checked={mode === 'dynamic'}
+					onClick={() => setMode((prev) => (prev === 'dynamic' ? 'static' : 'dynamic'))}
+				/>
 			</div>
-			<Map stateCounts={stateCounts} />
+
+			{/* Map SVG */}
+			<Map stateCounts={stateCounts} maxVisitCount={maxVisitCount} mode={mode} />
+
+			{/* Legends */}
+			<div className="relative mx-auto h-16 w-2/3 pt-4">
+				<AnimatePresence>
+					{mode === 'dynamic' ? (
+						<DynamicLegend key="animate-dynamic" maxVisitCount={maxVisitCount} />
+					) : (
+						<StaticLegend key="animate-static" />
+					)}
+				</AnimatePresence>
+			</div>
 		</div>
 	);
 }
 
-function Map({ stateCounts }) {
-	// Find the state with the most visits, aside from MN
-	const visitCounts = Object.keys(stateCounts)
-		.filter((state) => state !== 'MN')
-		.map((state) => stateCounts[state]);
-
-	const mostVisited = Math.max(...visitCounts);
-
+function Map({ stateCounts, maxVisitCount, mode }: MapProps) {
 	// Calculate the fill color based on the number of visits (note: color values with transparency must be used)
 	const fillColor = (state: string): string => {
-		if (state === 'MN') return 'rgba(0, 80, 255, 1)';
-		if (!stateCounts[state]) return 'rgba(0, 0, 0, 0.25)';
+		const home = 'rgba(0, 80, 255, 1)';
+		const notVisited = 'rgba(0, 0, 0, 0.25)';
 
-		const hue = (stateCounts[state] / mostVisited) * 120;
+		// Static mode
+		if (mode === 'static') return stateCounts[state] ? home : notVisited;
+
+		// Dynamic mode
+		if (state === 'MN') return home;
+		if (!stateCounts[state]) return notVisited;
+
+		const hue = (stateCounts[state] / maxVisitCount) * 120;
 		return `hsl(${hue}, 100%, 50%)`;
 	};
 
 	return (
-		<div className="flex w-full flex-col items-center gap-4">
-			{/* Map */}
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				viewBox="477 421 593.3779761904764 318.2870370370371"
-				width="100%"
-			>
-				{statePaths.map(({ state, path }) => (
-					<motion.path
-						key={state}
-						id={state}
-						d={path}
-						stroke="black"
-						strokeWidth="1"
-						initial={{ fill: 'rgba(0, 0, 0, 0)', pathLength: 0 }}
-						animate={{ fill: fillColor(state), pathLength: 1 }}
-						transition={{ duration: 2, ease: 'easeInOut' }}
-					/>
-				))}
-			</svg>
-
-			{/* Legend */}
-			<motion.div
-				initial={{ opacity: 0, y: 20 }}
-				animate={{ opacity: 1, y: 0 }}
-				transition={{ delay: 2, duration: 1, ease: 'easeInOut' }}
-				className="mb-4 grid w-2/3 grid-cols-[1fr_auto] gap-4"
-			>
-				<div>
-					<div className="h-4 bg-gradient-to-r from-[hsl(0,_100%,_50%)] to-[hsl(120,_100%,_50%)]" />
-					<p className="flex justify-between">
-						<span>1</span>
-						<span>{mostVisited}</span>
-					</p>
-				</div>
-				<div>
-					<div className="h-4 bg-[rgb(0,_80,_255)]"></div>
-					<p className="text-center">Home</p>
-				</div>
-			</motion.div>
-		</div>
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox="477 421 593.3779761904764 318.2870370370371"
+			width="100%"
+		>
+			{statePaths.map(({ state, path }) => (
+				<motion.path
+					key={state}
+					id={state}
+					d={path}
+					stroke="black"
+					strokeWidth="1"
+					initial={{ fill: 'rgba(0, 0, 0, 0)', pathLength: 0 }}
+					animate={{ fill: fillColor(state), pathLength: 1 }}
+					transition={{ duration: 2, ease: 'easeInOut' }}
+				/>
+			))}
+		</svg>
 	);
 }
 
-// SVG paths
+function LegendContainer({ className = '', children }) {
+	return (
+		<motion.div
+			variants={{
+				visible: {
+					opacity: 1,
+					y: 0,
+					transition: { duration: 1, delay: 1 },
+				},
+				hidden: {
+					opacity: 0,
+					y: 12,
+					transition: { duration: 1 },
+				},
+			}}
+			initial="hidden"
+			animate="visible"
+			exit="hidden"
+			className={classNames('absolute w-full', className)}
+		>
+			{children}
+		</motion.div>
+	);
+}
+
+function DynamicLegend({ maxVisitCount }) {
+	return (
+		<LegendContainer className="grid grid-cols-[1fr_auto] gap-4">
+			<div>
+				<div className="h-4 bg-gradient-to-r from-[hsl(0,_100%,_50%)] to-[hsl(120,_100%,_50%)]" />
+				<p className="grid grid-cols-[1fr_auto_1fr]">
+					<span>1</span>
+					<span>Visits</span>
+					<span className="text-right">{maxVisitCount}</span>
+				</p>
+			</div>
+			<div>
+				<div className="h-4 bg-theme-blue-dark"></div>
+				<p className="text-center">Home</p>
+			</div>
+		</LegendContainer>
+	);
+}
+
+function StaticLegend() {
+	return (
+		<LegendContainer>
+			<div className="h-4 bg-theme-blue-dark"></div>
+			<p className="text-center">Visited</p>
+		</LegendContainer>
+	);
+}
+
 const statePaths = [
 	{
 		state: 'AK',

@@ -23,7 +23,7 @@ td {
 	@apply border border-gray-500 px-4 py-1;
 }
 
-label {
+form label {
 	@apply grid grid-cols-[100px_1fr] items-center gap-2;
 }
 

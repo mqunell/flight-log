@@ -26,12 +26,12 @@ export default function Home({ trips, blocks }) {
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 
+			<UsaMap blocks={blocks} />
 			<OverallData trips={trips} blocks={blocks} />
 			<AircraftsData blocks={blocks} />
 			<TripsData trips={trips} />
 			<FlightsData blocks={blocks} />
 			<MiscData blocks={blocks} />
-			<UsaMap blocks={blocks} />
 		</div>
 	);
 }
