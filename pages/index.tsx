@@ -27,8 +27,8 @@ export default function Home({ trips, blocks }) {
 			</Head>
 
 			<UsaMap blocks={blocks} />
-			<OverallData trips={trips} blocks={blocks} />
 			<AircraftsData blocks={blocks} />
+			<OverallData trips={trips} blocks={blocks} />
 			<TripsData trips={trips} />
 			<FlightsData blocks={blocks} />
 			<MiscData blocks={blocks} />
