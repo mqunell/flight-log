@@ -27,10 +27,25 @@ interface ChartData {
 	[key: string]: any; // ex. { 'A220': 15 }
 }
 
+interface TooltipProps {
+	active: boolean;
+	payload: Payload[];
+	label: string;
+}
+
+interface Payload {
+	color: string; // Hex code
+	dataKey: string;
+	payload: ChartData;
+	value: number;
+	// chartType, fill, formatter, type, unit, etc
+}
+
 const colors = ['#15550d', '#18740f', '#19950f', '#18b70e', '#12db09', '#00ff00'];
 
 /**
- *
+ * Displays data about the aircrafts that have been flown on. This component aggregates and formats
+ * data from all of the Blocks, then passes it to the AircraftsChart component.
  */
 export default function AircraftsData({ blocks }: Props) {
 	// Aggregate aircraft data by make and model
@@ -120,16 +135,39 @@ function AircraftsChart({ aircraftData }: { aircraftData: AircraftData[] }) {
 				<CartesianGrid />
 				<XAxis dataKey="title" height={20} />
 				<YAxis width={30} />
-				<Tooltip />
+				<Tooltip content={<CustomTooltip /* props passed internally */ />} />
 
 				{chartData.map((chartItem: ChartData) =>
 					Object.keys(chartItem)
 						.filter((key) => key !== 'title')
+						.sort((a, b) => (a < b ? 1 : -1))
 						.map((makeModel, index) => (
 							<Bar key={makeModel} dataKey={makeModel} stackId="a" fill={colors[index]} />
 						))
 				)}
 			</BarChart>
 		</ResponsiveContainer>
+	);
+}
+
+// "any" included as props type to prevent an ESLint error from the props being passed internally
+function CustomTooltip({ active, payload, label }: TooltipProps | any) {
+	if (!(active && payload && payload.length)) return null;
+
+	return (
+		<div className="flex flex-col gap-1 rounded-md bg-white py-2 px-3 shadow-md">
+			<p className="text-center font-bold">{label}</p>
+
+			{payload
+				.sort((a: Payload, b: Payload) => (a.dataKey < b.dataKey ? -1 : 1))
+				.map(({ dataKey, color, value }) => (
+					<p key={dataKey} style={{ color }} className="grid grid-cols-[auto_1fr] gap-2">
+						<span>{dataKey}:</span>
+						<span className="text-right italic">
+							{value} flight{value !== 1 && 's'}
+						</span>
+					</p>
+				))}
+		</div>
 	);
 }
