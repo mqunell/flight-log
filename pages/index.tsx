@@ -20,12 +20,6 @@ export const getServerSideProps: GetServerSideProps = async () => {
 export default function Home({ trips, blocks }) {
 	return (
 		<div className="flex flex-col items-center gap-4 p-4">
-			<Head>
-				<title>Flight Log</title>
-				<meta name="description" content="Next.js App" />
-				<link rel="icon" href="/favicon.ico" />
-			</Head>
-
 			<UsaMap blocks={blocks} />
 			<AircraftsData blocks={blocks} />
 			<OverallData trips={trips} blocks={blocks} />

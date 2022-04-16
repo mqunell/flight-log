@@ -41,12 +41,6 @@ const formatTime = (minutes: number): string => {
 export default function Rotations({ trips }) {
 	return (
 		<div className="flex h-screen flex-col items-center gap-2 p-4">
-			<Head>
-				<title>Flight Log</title>
-				<meta name="description" content="Next.js App" />
-				<link rel="icon" href="/favicon.ico" />
-			</Head>
-
 			<h1 className="bold text-2xl text-white">List of Rotations</h1>
 
 			<div
